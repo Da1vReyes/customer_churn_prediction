@@ -39,7 +39,7 @@ Acquiring a new customer is generally more expensive than retaining an existing 
 The dataset is moderately imbalanced (about 2.8 : 1), so accuracy alone is not a reliable metric. Models are evaluated with Precision, Recall, F1-score and ROC-AUC.
 
 ## Tools and Technologies
-Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, XGBoost, imbalanced-learn, Jupyter Notebook.
+Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, XGBoost (optional), imbalanced-learn, Jupyter Notebook.
 
 ## Project Workflow
 Business Understanding → Data Collection → Data Cleaning → EDA → Feature Engineering → Model Training → Model Evaluation → Model Optimization → Feature Importance → Business Recommendations
@@ -113,10 +113,31 @@ Churn is the minority class, so the models were re-trained with three strategies
 - **Selected model: tuned Random Forest with class weights**: it detects 291 of 374 churners in the test set. Full reasoning in [`docs/model_selection.md`](docs/model_selection.md).
 
 ## Key Findings
-_Work in progress._
+- **Final model:** tuned Random Forest with class weights. On the test set: recall 0.78 (detects 291 of 374 churners), precision 0.55, F1 0.64, ROC-AUC 0.845.
+- **Strongest predictors** (permutation importance and Logistic Regression coefficients): contract type, fiber optic internet, tenure and, with a smaller effect, electronic check payment and protection services.
+- **Model errors:** false positives (241) look like typical churners (short tenure, month-to-month, fiber), so they are real at-risk customers. False negatives (83) look loyal and probably leave for reasons not in the data (service experience, competitor offers).
+- **Prioritization:** the 20% of customers with the highest predicted risk contain 50% of all churners, and the top 40% contain 81%.
+
+![Feature importance](visuals/feature_importance.png)
+![Risk deciles](visuals/risk_deciles.png)
+
+### Limitations
+Associations, not causes; precision of 55% (retention actions must be cheap); 83 churners are missed; small test set (374 churners); public sample dataset; XGBoost not used because `libomp` was not available.
+
+### Future improvements
+Tune the decision threshold to the real cost of an offer, try XGBoost/LightGBM and SHAP values, add behavioral data (usage, complaints, satisfaction), test SMOTENC, and A/B test the retention actions.
 
 ## Business Recommendations
-_Work in progress._
+1. **Move month-to-month customers to longer contracts** (42.7% churn vs 11.3% one year and 2.8% two years) with discounts or price locks.
+2. **Build a first-year onboarding program**: 47.4% of customers with up to 12 months churn.
+3. **Investigate the fiber optic offer**: 41.9% churn vs 19.0% for DSL; review price, quality and bundles.
+4. **Encourage automatic payment**: electronic check users churn 45.3% vs 15-17% on automatic payments.
+5. **Promote security and tech support add-ons**: about 15% churn with them vs 31% without (5.3% with all four protection services).
+6. **Run targeted campaigns with the risk ranking**: the top 20% riskiest customers hold 50% of churners; skip the lowest-risk 30%.
+7. **Loyalty plans for vulnerable segments**: senior citizens (41.7%), customers without partner or dependents.
+8. **Collect richer behavioral data** to detect the churners the model misses.
+
+The full analysis is in section 13 to 16 of [`notebooks/customer_churn_analysis.ipynb`](notebooks/customer_churn_analysis.ipynb); the slide outline is in [`docs/presentation.md`](docs/presentation.md).
 
 ## How to Run the Project
 ```bash
@@ -137,14 +158,15 @@ Customer-Churn-Prediction/
 ├── docs/
 │   ├── data_dictionary.md
 │   ├── feature_engineering.md
-│   └── model_selection.md
+│   ├── model_selection.md
+│   └── presentation.md
 ├── notebooks/
 │   └── customer_churn_analysis.ipynb
 ├── src/churn/
 │   ├── config.py
 │   ├── data/            # loader.py, cleaning.py
 │   ├── features/        # engineering.py, preprocessing.py
-│   ├── modeling/        # split.py, train.py, evaluate.py, imbalance.py, validation.py, tuning.py
+│   ├── modeling/        # split.py, train.py, evaluate.py, imbalance.py, validation.py, tuning.py, interpretation.py
 │   └── visualization/   # eda.py, model_plots.py
 ├── visuals/
 ├── README.md

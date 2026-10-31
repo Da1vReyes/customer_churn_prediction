@@ -86,3 +86,42 @@ def plot_cv_scores(cv_results, metric="F1-Score"):
     ax.tick_params(axis="x", labelrotation=15)
     ax.spines[["top", "right"]].set_visible(False)
     return fig
+
+
+def plot_feature_importance(permutation, coefficients, top: int = 10):
+    """Left: permutation importance of the final model. Right: Logistic Regression coefficients (direction)."""
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+    best = permutation.head(top).iloc[::-1]
+    axes[0].barh(best.index, best["importance"], xerr=best["std"], color="#4C72B0")
+    axes[0].set_title("Random Forest: permutation importance\n(drop in F1 when the feature is shuffled)")
+
+    shown = coefficients.iloc[: top // 2].tolist() + coefficients.iloc[-(top // 2):].tolist()
+    names = coefficients.index[: top // 2].tolist() + coefficients.index[-(top // 2):].tolist()
+    colors = ["#4C72B0" if v < 0 else "#DD8452" for v in shown]
+    axes[1].barh(names, shown, color=colors)
+    axes[1].axvline(0, color="black", linewidth=0.8)
+    axes[1].set_title("Logistic Regression coefficients\n(orange = more churn, blue = less churn)")
+
+    for ax in axes:
+        ax.spines[["top", "right"]].set_visible(False)
+    fig.tight_layout()
+    return fig
+
+
+def plot_risk_deciles(table):
+    """Churn rate in each risk decile (bars) and the cumulative share of churners captured (line)."""
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    ax.bar(table.index.astype(str), table["churn_rate_%"], color="#DD8452")
+    ax.set_xlabel("Risk decile (1 = the 10% of customers with the highest predicted risk)")
+    ax.set_ylabel("Actual churn rate (%)")
+    ax2 = ax.twinx()
+    ax2.plot(table.index.astype(str), table["cumulative_churners_captured_%"], color="#4C72B0", marker="o")
+    ax2.set_ylabel("Cumulative churners captured (%)")
+    ax2.set_ylim(0, 105)
+    ax.set_title("Customers ranked by predicted risk")
+    ax.spines[["top"]].set_visible(False)
+    ax2.spines[["top"]].set_visible(False)
+    ax.grid(False)
+    ax2.grid(False)
+    return fig
