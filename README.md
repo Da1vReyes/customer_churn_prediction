@@ -62,10 +62,39 @@ The EDA (section 5 of the notebook) includes 8+ visualizations saved in [`visual
 Seven features were created (`tenure_group`, `num_services`, `num_protection_services`, `has_streaming`, `spending_category`, `auto_payment`, `avg_monthly_spend`), `customerID`, `gender` and `PhoneService` were removed, and categorical variables were encoded. Details in [`docs/feature_engineering.md`](docs/feature_engineering.md). The machine-learning-ready dataset is `data/processed_data/telco_churn_ml_ready.csv` (7,043 rows, 31 features + target).
 
 ## Machine Learning Models
-_Work in progress._
+The data is split 80/20 with a **stratified** split (both sets keep the 26.5% churn rate) and four classification models are trained with untuned settings (section 8 of the notebook, code in `src/churn/modeling/`):
+
+| Model | Role |
+|---|---|
+| Logistic Regression | Baseline (numeric features standardized inside its pipeline) |
+| Decision Tree | `max_depth=5` |
+| Random Forest | 200 trees |
+| XGBoost | Falls back to sklearn's Gradient Boosting when XGBoost cannot be loaded |
+
+To train and compare all models from the terminal:
+```bash
+PYTHONPATH=src python -m churn.modeling.split   # creates train.csv and test.csv
+PYTHONPATH=src python -m churn.modeling.train   # prints the comparison table
+```
 
 ## Evaluation Metrics
-_Work in progress._
+Because churn is the minority class, models are compared with Accuracy, Precision, Recall, F1-score and ROC-AUC (churn is the positive class), plus the train ROC-AUC to detect overfitting.
+
+### Initial results (test set)
+| Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
+|---|---|---|---|---|---|
+| Logistic Regression | 0.793 | 0.636 | 0.513 | 0.568 | 0.842 |
+| Decision Tree | 0.789 | 0.620 | 0.527 | 0.569 | 0.827 |
+| Random Forest | 0.789 | 0.629 | 0.495 | 0.554 | 0.821 |
+| Gradient Boosting | 0.792 | 0.639 | 0.497 | 0.559 | 0.842 |
+
+![Model performance](visuals/model_performance.png)
+![ROC curves](visuals/roc_curves.png)
+
+- All models reach about 79% accuracy, only 6 points above the "always No churn" rule, so accuracy does not separate them.
+- **Random Forest overfits** (train ROC-AUC about 1.00 vs 0.82 on test) and needs tuning.
+- **All models catch only about half of the churners (recall 49% to 53%)**, the main weakness to fix in Week 4 with class-imbalance handling and tuning.
+- **Initial choice: Logistic Regression**: ties for the best ROC-AUC, does not overfit and is the most interpretable.
 
 ## Key Findings
 _Work in progress._
@@ -98,7 +127,8 @@ Customer-Churn-Prediction/
 │   ├── config.py
 │   ├── data/            # loader.py, cleaning.py
 │   ├── features/        # engineering.py, preprocessing.py
-│   └── visualization/   # eda.py
+│   ├── modeling/        # split.py, train.py, evaluate.py
+│   └── visualization/   # eda.py, model_plots.py
 ├── visuals/
 ├── README.md
 └── requirements.txt

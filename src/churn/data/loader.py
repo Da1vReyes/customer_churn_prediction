@@ -1,7 +1,7 @@
 """Input layer: load datasets from disk and inspect their structure."""
 import pandas as pd
 
-from churn.config import PROCESSED_DATA_PATH, RAW_DATA_PATH, TARGET
+from churn.config import ML_READY_DATA_PATH, PROCESSED_DATA_PATH, RAW_DATA_PATH, TARGET
 
 
 def load_raw_data(path=RAW_DATA_PATH) -> pd.DataFrame:
@@ -11,6 +11,11 @@ def load_raw_data(path=RAW_DATA_PATH) -> pd.DataFrame:
 
 def load_processed_data(path=PROCESSED_DATA_PATH) -> pd.DataFrame:
     """Load the cleaned dataset produced by `churn.data.cleaning`."""
+    return pd.read_csv(path)
+
+
+def load_ml_ready_data(path=ML_READY_DATA_PATH) -> pd.DataFrame:
+    """Load the numeric dataset produced by `churn.features.preprocessing`."""
     return pd.read_csv(path)
 
 

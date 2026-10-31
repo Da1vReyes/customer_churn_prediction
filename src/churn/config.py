@@ -8,8 +8,11 @@ RAW_DATA_PATH = BASE_DIR / "data" / "raw_data" / "telco_churn.csv"
 PROCESSED_DATA_PATH = BASE_DIR / "data" / "processed_data" / "telco_churn_clean.csv"
 FEATURES_DATA_PATH = BASE_DIR / "data" / "processed_data" / "telco_churn_features.csv"
 ML_READY_DATA_PATH = BASE_DIR / "data" / "processed_data" / "telco_churn_ml_ready.csv"
+TRAIN_DATA_PATH = BASE_DIR / "data" / "processed_data" / "train.csv"
+TEST_DATA_PATH = BASE_DIR / "data" / "processed_data" / "test.csv"
 VISUALS_DIR = BASE_DIR / "visuals"
 
 RANDOM_STATE = 42
+TEST_SIZE = 0.2
 TARGET = "Churn"
 ID_COLUMN = "customerID"
