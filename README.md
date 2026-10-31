@@ -5,13 +5,38 @@
 **Note:** This repository is a rebuild of the Customer Churn Prediction project I developed during my Machine Learning internship at NexAfrica. I lost the original code, so I recreated the full workflow from scratch using the public Telco Customer Churn dataset, following the same steps: data preparation, EDA, feature engineering, classification models, class imbalance handling, optimization and interpretation.
 
 ## Project Overview
-_Work in progress._
+The goal of this project is to build a Machine Learning model that predicts whether a telecom customer is likely to leave the company (churn) or stay. It simulates a real-world business problem common in telecommunications, banking, insurance, subscription services and e-commerce.
+
+- **Problem type:** supervised learning, binary classification
+- **Target variable:** `Churn` (Yes / No)
 
 ## Business Problem
-_Work in progress._
+Acquiring a new customer is generally more expensive than retaining an existing one, so losing customers directly hurts recurring revenue. By predicting which customers are likely to churn, the company can intervene early with retention offers, contract improvements or proactive support.
+
+> The objective of this project is to develop a Machine Learning classification model that predicts whether a customer is likely to churn based on demographic information, account details, subscription information, service usage, contract type, tenure, and billing information.
 
 ## Dataset
-_Work in progress._
+- **Source:** Telco Customer Churn (IBM sample data, also available on Kaggle)
+- **Size:** 7,043 customers, 21 columns (19 features, 1 identifier, 1 target)
+- **Raw data:** `data/raw_data/telco_churn.csv`
+- **Cleaned data:** `data/processed_data/telco_churn_clean.csv`
+- **Data dictionary:** [`docs/data_dictionary.md`](docs/data_dictionary.md)
+
+### Data quality report
+| Check | Result | Action |
+|---|---|---|
+| Missing values (`NaN`) | None | None needed |
+| Blank strings in `TotalCharges` | 11 rows, all with `tenure = 0` (new customers) | Converted column to numeric, blanks set to `0` |
+| Duplicate rows / customers | 0 | None needed |
+| Inconsistent categories | Redundant `No internet service` / `No phone service` values; `SeniorCitizen` coded as 0/1 | Merged into `No`; converted to `No/Yes` |
+
+### Target variable distribution
+| Churn | Customers | Percentage |
+|---|---|---|
+| No | 5,174 | 73.46% |
+| Yes | 1,869 | 26.54% |
+
+The dataset is moderately imbalanced (about 2.8 : 1), so accuracy alone is not a reliable metric. Models are evaluated with Precision, Recall, F1-score and ROC-AUC.
 
 ## Tools and Technologies
 Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, XGBoost, imbalanced-learn, Jupyter Notebook.
