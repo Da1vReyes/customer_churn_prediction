@@ -93,8 +93,24 @@ Because churn is the minority class, models are compared with Accuracy, Precisio
 
 - All models reach about 79% accuracy, only 6 points above the "always No churn" rule, so accuracy does not separate them.
 - **Random Forest overfits** (train ROC-AUC about 1.00 vs 0.82 on test) and needs tuning.
-- **All models catch only about half of the churners (recall 49% to 53%)**, the main weakness to fix in Week 4 with class-imbalance handling and tuning.
+- **All models catch only about half of the churners (recall 49% to 53%)**, the main weakness addressed in the next section.
 - **Initial choice: Logistic Regression**: ties for the best ROC-AUC, does not overfit and is the most interpretable.
+
+## Class Imbalance and Optimization
+Churn is the minority class, so the models were re-trained with three strategies (class weights, SMOTE, undersampling), compared with 5-fold cross-validation and tuned with GridSearchCV / RandomizedSearchCV (section 10-12 of the notebook, code in `src/churn/modeling/`).
+
+![Imbalance strategies](visuals/imbalance_strategies.png)
+
+| Version | Precision | Recall | F1-Score | ROC-AUC |
+|---|---|---|---|---|
+| Logistic Regression, baseline | 0.636 | 0.513 | 0.568 | 0.842 |
+| Logistic Regression, class weight | 0.504 | 0.791 | 0.616 | 0.842 |
+| Gradient Boosting, class weight | 0.508 | 0.813 | 0.625 | 0.840 |
+| **Random Forest, tuned + class weight** | 0.547 | **0.778** | **0.642** | **0.845** |
+
+- Imbalance handling raises recall from about 50% to about 78-81% at the cost of precision; ROC-AUC does not change because the ranking of customers is the same.
+- Tuning mostly helps Random Forest (F1 0.54 to 0.64, train ROC-AUC 1.00 to 0.91, less overfitting).
+- **Selected model: tuned Random Forest with class weights**: it detects 291 of 374 churners in the test set. Full reasoning in [`docs/model_selection.md`](docs/model_selection.md).
 
 ## Key Findings
 _Work in progress._
@@ -120,14 +136,15 @@ Customer-Churn-Prediction/
 │   └── processed_data/
 ├── docs/
 │   ├── data_dictionary.md
-│   └── feature_engineering.md
+│   ├── feature_engineering.md
+│   └── model_selection.md
 ├── notebooks/
 │   └── customer_churn_analysis.ipynb
 ├── src/churn/
 │   ├── config.py
 │   ├── data/            # loader.py, cleaning.py
 │   ├── features/        # engineering.py, preprocessing.py
-│   ├── modeling/        # split.py, train.py, evaluate.py
+│   ├── modeling/        # split.py, train.py, evaluate.py, imbalance.py, validation.py, tuning.py
 │   └── visualization/   # eda.py, model_plots.py
 ├── visuals/
 ├── README.md
