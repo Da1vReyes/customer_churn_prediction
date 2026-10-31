@@ -6,6 +6,8 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 
 RAW_DATA_PATH = BASE_DIR / "data" / "raw_data" / "telco_churn.csv"
 PROCESSED_DATA_PATH = BASE_DIR / "data" / "processed_data" / "telco_churn_clean.csv"
+FEATURES_DATA_PATH = BASE_DIR / "data" / "processed_data" / "telco_churn_features.csv"
+ML_READY_DATA_PATH = BASE_DIR / "data" / "processed_data" / "telco_churn_ml_ready.csv"
 VISUALS_DIR = BASE_DIR / "visuals"
 
 RANDOM_STATE = 42
