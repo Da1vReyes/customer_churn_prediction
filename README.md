@@ -45,7 +45,21 @@ Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, XGBoost, imbalanced-le
 Business Understanding → Data Collection → Data Cleaning → EDA → Feature Engineering → Model Training → Model Evaluation → Model Optimization → Feature Importance → Business Recommendations
 
 ## Exploratory Data Analysis
-_Work in progress._
+The EDA (section 5 of the notebook) includes 8+ visualizations saved in [`visuals/`](visuals/). Highlights:
+
+![Churn analysis](visuals/churn_analysis.png)
+
+### Key insights so far
+1. **Contract type is the strongest driver:** month-to-month customers churn 42.7%, versus 11.3% (one year) and 2.8% (two year).
+2. **New customers churn the most:** 47.4% churn in the first year, falling steadily with tenure.
+3. **Higher bills, more churn:** customers paying $70-$90 per month churn about 38%, versus about 11% under $35.
+4. **Electronic check users churn 45.3%**, about three times more than customers on automatic payments.
+5. **Fiber optic customers churn 41.9%**, versus 19.0% for DSL and 7.4% without internet.
+6. **Security and tech support services protect against churn** (about 15% vs 31% without them).
+7. **Senior citizens** (41.7%) and customers without partner or dependents churn more; **gender has no effect**.
+
+### Feature engineering
+Seven features were created (`tenure_group`, `num_services`, `num_protection_services`, `has_streaming`, `spending_category`, `auto_payment`, `avg_monthly_spend`), `customerID`, `gender` and `PhoneService` were removed, and categorical variables were encoded. Details in [`docs/feature_engineering.md`](docs/feature_engineering.md). The machine-learning-ready dataset is `data/processed_data/telco_churn_ml_ready.csv` (7,043 rows, 31 features + target).
 
 ## Machine Learning Models
 _Work in progress._
@@ -75,10 +89,16 @@ Customer-Churn-Prediction/
 ├── data/
 │   ├── raw_data/
 │   └── processed_data/
+├── docs/
+│   ├── data_dictionary.md
+│   └── feature_engineering.md
 ├── notebooks/
 │   └── customer_churn_analysis.ipynb
-├── src/
-│   └── preprocessing_and_modeling.py
+├── src/churn/
+│   ├── config.py
+│   ├── data/            # loader.py, cleaning.py
+│   ├── features/        # engineering.py, preprocessing.py
+│   └── visualization/   # eda.py
 ├── visuals/
 ├── README.md
 └── requirements.txt
