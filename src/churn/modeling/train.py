@@ -22,6 +22,7 @@ try:
     XGBOOST_AVAILABLE = True
 except Exception:  # xgboost missing, or its native library (libomp on macOS) is not installed
     XGBOOST_AVAILABLE = False
+    print("XGBoost is not available (is libomp installed?). Using sklearn's Gradient Boosting instead.")
 
 
 def get_models() -> dict:
@@ -43,7 +44,6 @@ def get_models() -> dict:
     if XGBOOST_AVAILABLE:
         boosting = ("XGBoost", XGBClassifier(eval_metric="logloss", random_state=RANDOM_STATE))
     else:
-        print("XGBoost is not available (is libomp installed?). Using sklearn's Gradient Boosting instead.")
         boosting = ("Gradient Boosting", GradientBoostingClassifier(random_state=RANDOM_STATE))
 
     return {
